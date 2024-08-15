@@ -6,4 +6,4 @@ source unit-test-generator-venv/bin/activate
 
 pip install -r requirements.txt
 
-pyinstaller --onefile generate_unit_tests.py
+pyinstaller --onefile generate-unit-tests.py
