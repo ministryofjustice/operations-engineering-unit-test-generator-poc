@@ -117,8 +117,6 @@ def get_modified_function_names(path):
 
 def build_prompt(path, template="new_test_suite", test_path="", modified_function_names="", failed_tests=""):
     file_to_test_content = read_file_contents(path)
-    example_script = read_file_contents("examples/cloudtrail_service.py")
-    example_test_suite = read_file_contents("examples/test_cloudtrail_service.py")
     unit_test_file_content = ""
 
     if test_path != "":
@@ -129,18 +127,14 @@ def build_prompt(path, template="new_test_suite", test_path="", modified_functio
 
         return NEW_TEST_SUITE_PROMPT_TEMPLATE.format(
             module=module,
-            file_to_test_content=file_to_test_content,
-            example_script=example_script,
-            example_test_suite=example_test_suite
+            file_to_test_content=file_to_test_content
         )
 
     if template == "modify_test_suite":
         return MODIFY_TEST_SUITE_PROMPT_TEMPLATE.format(
             file_to_test_content=file_to_test_content,
             unit_test_file_content=unit_test_file_content,
-            modified_function_names=modified_function_names,
-            example_script=example_script,
-            example_test_suite=example_test_suite
+            modified_function_names=modified_function_names
         )
 
     if template == "failed_tests":
@@ -173,7 +167,10 @@ def read_file_contents(path):
 
 
 def run_test_suite(path, test_command):
-    test_results = subprocess.run(test_command.split(" ") + [path], capture_output=True, text=True, check=True).stderr
+    try:
+        test_results = subprocess.run(test_command.split(" ") + [path], capture_output=True, text=True, check=True).stderr
+    except subprocess.CalledProcessError as e:
+        return e.stderr
 
     broken_down_test_results = test_results.split("======================================================================")
 
