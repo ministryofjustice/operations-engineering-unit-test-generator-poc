@@ -11,7 +11,7 @@ def parse_cli_arguments():
     parser.add_argument('--test-path', type=str, help="Path to existing unit tests")
     parser.add_argument('--test-command', type=str, default="pipenv run python -m unittest", help="Command to run unit tests")
     parser.add_argument('--dirs-to-test', nargs='+', help="directories to test")
-    parser.add_argument('--test-file-prefix', type=str, default="test_", help="prefix for test scripts")
+    parser.add_argument('--test-prefix', type=str, default="test_", help="prefix for test paths")
     parser.add_argument('--max-cycles', type=int, default=3, help="maximum number of attempts AI will make at generating passing tests")
     parser.add_argument('--generated-test-path', type=str, default="test/ai_test/", help="path to AI generated unit tests")
 
@@ -194,9 +194,9 @@ def generate_tests(prompt, test_path, test_command):
 
     return failed_tests
 
-def generate_test_path(path, test_path, test_file_prefix):
+def generate_test_path(path, test_path, test_prefix):
     if test_path:
-        return test_path + test_file_prefix + path.split('/').pop()
+        return test_path + test_prefix + path.split('/').pop()
 
     return "test/" + "/".join([f"test_{dir}" for dir in path.split("/")])
 
@@ -210,7 +210,7 @@ def main():
     for path in modified_files:
         print(f"Generating unit tests for {path}")
 
-        test_path = generate_test_path(path, args.test_path, args.test_file_prefix)
+        test_path = generate_test_path(path, args.test_path, args.test_prefix)
 
         validate_source_file_path(path)
 
