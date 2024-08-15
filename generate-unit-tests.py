@@ -198,7 +198,7 @@ def generate_test_path(path, test_path, test_prefix):
     if test_path:
         return test_path + test_prefix + path.split('/').pop()
 
-    return "test/" + "/".join([f"test_{dir}" for dir in path.split("/")])
+    return "test/" + "/".join([f"{test_prefix + dir}" for dir in path.split("/")])
 
 def main():
     args = parse_cli_arguments()
