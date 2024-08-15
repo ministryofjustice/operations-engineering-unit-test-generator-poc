@@ -8,12 +8,12 @@ from services.bedrock_service import BedrockService
 def parse_cli_arguments():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--test-path', type=str, help="Path to existing unit tests")
+    parser.add_argument('--test-path', type=str, default="test/", help="Path to existing unit tests")
     parser.add_argument('--test-command', type=str, default="pipenv run python -m unittest", help="Command to run unit tests")
     parser.add_argument('--dirs-to-test', nargs='+', help="directories to test")
     parser.add_argument('--test-prefix', type=str, default="test_", help="prefix for test paths")
     parser.add_argument('--max-cycles', type=int, default=3, help="maximum number of attempts AI will make at generating passing tests")
-    parser.add_argument('--generated-test-path', type=str, default="test/ai_test/", help="path to AI generated unit tests")
+    parser.add_argument('--generated-test-path', type=str, default="ai_test/", help="path to AI generated unit tests")
 
     return parser.parse_args()
 
@@ -194,11 +194,6 @@ def generate_tests(prompt, test_path, test_command):
 
     return failed_tests
 
-def generate_test_path(path, test_path, test_prefix):
-    if test_path:
-        return test_path + test_prefix + path.split('/').pop()
-
-    return "test/" + "/".join([f"{test_prefix + dir}" for dir in path.split("/")])
 
 def main():
     args = parse_cli_arguments()
@@ -210,7 +205,7 @@ def main():
     for path in modified_files:
         print(f"Generating unit tests for {path}")
 
-        test_path = generate_test_path(path, args.test_path, args.test_prefix)
+        test_path = args.test_path + "/".join([f"{args.test_prefix + dir}" for dir in path.split("/")])
 
         validate_source_file_path(path)
 
@@ -223,7 +218,7 @@ def main():
         else:
             prompt = build_prompt(path)
 
-        test_test_path = args.generated_test_path + test_path.split("/").pop()
+        test_test_path = args.test_path + args.generated_test_path + test_path.split("/").pop()
 
         # generate unit tests for specified path
         failed_tests = generate_tests(prompt, test_test_path, args.test_command)
