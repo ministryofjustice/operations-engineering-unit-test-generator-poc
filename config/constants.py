@@ -7,7 +7,6 @@ ENTERPRISE = "ministry-of-justice-uk"
 SLACK_CHANNEL = "operations-engineering-alerts"
 SR_SLACK_CHANNEL = "operations-engineering-team"
 OPERATIONS_ENGINEERING_GITHUB_USERNAMES = [
-    "SteveMarshall",
     "andyrogers1973",
     "jasonBirchall",
     "tamsinforbes",
